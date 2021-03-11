@@ -10,7 +10,7 @@
     </parent>
     <groupId>ru.geekbrains</groupId>
     <artifactId>shopping-list-backend</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <name>shopping-list-backend</name>
     <description>Demo project for Spring Boot</description>
 
@@ -56,6 +56,12 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-help-plugin</artifactId>
+                <version>3.1.1</version>
             </plugin>
         </plugins>
     </build>

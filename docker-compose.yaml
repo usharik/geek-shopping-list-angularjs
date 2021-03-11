@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  frontend:
+    image: ghcr.io/usharik/shopping-list/frontend:latest
+    ports:
+    - 8080:8008
+  backend:
+    image: ghcr.io/usharik/shopping-list/backend:latest
+    environment:
+      JDBC_DATABASE_URL: jdbc:mysql://db:3306/shopping_list_db?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0.23
+    volumes:
+    - my-db:/var/lib/mysql
+
+volumes:
+  my-db:
+
+networks:
+  net:

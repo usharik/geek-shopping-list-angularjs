@@ -8,9 +8,46 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
           java-version: 11
+
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots verify
+        id: mvn_build
+        run: |
+          mvn --batch-mode clean install -DskipTests
+          MAVEN_ARTEFACT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo 'Version of builded artefact is set to env variable MAVEN_ARTEFACT_VERSION='$MAVEN_ARTEFACT_VERSION
+          echo ::set-output name=artefact_version::${MAVEN_ARTEFACT_VERSION}
+
+      - name: Show builded files
+        run: |
+          ls -la ./shopping-list-backend/target
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Build frontend with Docker
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: shopping-list-frontend
+          tags: ghcr.io/${{ github.actor }}/shopping-list/frontend:latest
+
+      - name: Build backend with Docker
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: shopping-list-backend
+          tags: ghcr.io/${{ github.actor }}/shopping-list/backend:latest
+          build-args: |
+            JAR_FILE=shopping-list-backend-${{ steps.mvn_build.outputs.artefact_version }}.jar
