@@ -3,15 +3,30 @@ services:
   frontend:
     image: ghcr.io/usharik/shopping-list/frontend:latest
     ports:
-    - 8080:8008
+      - 8080:80
+    depends_on:
+      - backend
+
   backend:
     image: ghcr.io/usharik/shopping-list/backend:latest
+    ports:
+      - 8080
     environment:
       JDBC_DATABASE_URL: jdbc:mysql://db:3306/shopping_list_db?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC
     depends_on:
       - db
+    command: >
+        bash -c "
+          while ! nc -z -v -w30 db 3306;
+          do
+            echo waiting;
+            sleep 5;
+          done;
+        "
   db:
     image: mysql:8.0.23
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
     volumes:
     - my-db:/var/lib/mysql
 
@@ -20,3 +35,4 @@ volumes:
 
 networks:
   net:
+

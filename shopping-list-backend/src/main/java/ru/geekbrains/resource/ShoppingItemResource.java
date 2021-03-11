@@ -7,7 +7,7 @@ import ru.geekbrains.persist.ShoppingItemRepository;
 
 import java.util.List;
 
-@CrossOrigin("http://localhost:63342")
+//@CrossOrigin("http://localhost:63342")
 @RequestMapping("/api/v1/item")
 @RestController
 public class ShoppingItemResource {
