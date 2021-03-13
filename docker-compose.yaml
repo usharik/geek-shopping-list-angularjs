@@ -15,14 +15,7 @@ services:
       JDBC_DATABASE_URL: jdbc:mysql://db:3306/shopping_list_db?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC
     depends_on:
       - db
-    command: >
-        bash -c "
-          while ! nc -z -v -w30 db 3306;
-          do
-            echo waiting;
-            sleep 5;
-          done;
-        "
+    command: bash -c "/apps/wait-for-mysql.sh db && /apps/entrypoint.sh"
   db:
     image: mysql:8.0.23
     environment:
